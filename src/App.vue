@@ -1,28 +1,52 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app id="inspire">
+    <v-app-bar app>
+      <v-row>
+        <v-col cols="1">
+          <v-btn block color="yellow" class="black--text font-weight-bold" link to="/">IADB</v-btn>
+        </v-col>
+        <v-divider vertical/>
+        <v-col>
+          <v-text-field
+              solo flat dense hide-details
+              append-icon="mdi-magnify"
+              placeholder="Search albums, bands, etc"/>
+        </v-col>
+        <v-divider vertical/>
+        <v-col cols="1">
+          <v-btn>
+            <v-icon>mdi-format-list-checks</v-icon>
+            Wishlist
+          </v-btn>
+        </v-col>
+        <v-divider vertical/>
+        <v-col cols="1">
+          <v-btn block>
+            <v-icon>mdi-account</v-icon>
+            Scronheim</v-btn>
+        </v-col>
+      </v-row>
+    </v-app-bar>
+
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  mounted() {
+    this.$vuetify.theme.dark = true
+  },
+  data: () => ({
+    drawer: false,
+  }),
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+html { overflow-y: auto }
 </style>
