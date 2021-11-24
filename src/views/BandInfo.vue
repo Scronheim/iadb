@@ -40,7 +40,7 @@
                   <v-card-title class="text-h5">{{ album.title }} ({{ album.year }})</v-card-title>
                   <v-card-subtitle>{{ band.title }}</v-card-subtitle>
                   <v-card-actions>
-                    <v-btn class="ml-2 mt-5"
+                    <v-btn class="ml-2 mt-5" link :to="`/album/${album.id}`"
                            outlined
                            small>
                       Show album
@@ -75,16 +75,19 @@ export default {
           ' They have released three studio albums to date, along with two instrumental versions of previous releases. Their fourth studio album entitled "Elegy" is set to release independently on January 14th, 2022.',
       albums: [
         {
+          id: 1,
           title: 'Primordial',
           year: 2016,
           cover: 'https://img.discogs.com/b0ufkslu6mF1tYmEqox7cojtUxI=/fit-in/600x539/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-8532826-1507578514-7124.jpeg.jpg',
         },
         {
+          id: 2,
           title: 'Reclaimer',
           year: 2017,
           cover: 'https://img.discogs.com/vu54Ex2jCt9D29ec8cM6Ym53lpU=/fit-in/600x536/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10206627-1507579876-4863.jpeg.jpg',
         },
         {
+          id: 3,
           title: 'Melancholy',
           year: 2019,
           cover: 'https://img.discogs.com/ABHiAj5iXTrt7Rz6eZ6xkTQ0nRI=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-20158693-1631102171-1381.jpeg.jpg',

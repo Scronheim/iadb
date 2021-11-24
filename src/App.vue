@@ -23,7 +23,7 @@
         <v-col cols="1">
           <v-btn block>
             <v-icon>mdi-account</v-icon>
-            Scronheim</v-btn>
+            User</v-btn>
         </v-col>
       </v-row>
     </v-app-bar>

@@ -14,7 +14,11 @@ const routes = [
     path: '/band/:id',
     name: 'Band Info',
     component: () => import(/* webpackChunkName: "BandInfo" */ '../views/BandInfo.vue'),
-  }
+  },
+  {
+    path: '/album/:id',
+    name: 'Album Info',
+    component: () => import(/* webpackChunkName: "AlbumInfo" */ '../views/AlbumInfo')}
 ]
 
 const router = new VueRouter({
