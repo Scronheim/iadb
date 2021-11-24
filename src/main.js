@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import moment from 'moment'
 import vuetify from './plugins/vuetify'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
@@ -24,6 +25,11 @@ Vue.use(Toast, {
   closeButton: 'button',
   icon: true,
   rtl: false,
+})
+
+Vue.filter('humanDate', function(datetime) {
+  if (!datetime) return ''
+  return moment(datetime).format('MMMM Do, YYYY')
 })
 
 new Vue({

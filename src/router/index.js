@@ -18,7 +18,13 @@ const routes = [
   {
     path: '/album/:id',
     name: 'Album Info',
-    component: () => import(/* webpackChunkName: "AlbumInfo" */ '../views/AlbumInfo')}
+    component: () => import(/* webpackChunkName: "AlbumInfo" */ '../views/AlbumInfo')
+  },
+  {
+    path: '/label/:id',
+    name: 'Label Info',
+    component: () => import(/* webpackChunkName: "AlbumInfo" */ '../views/LabelInfo')
+  },
 ]
 
 const router = new VueRouter({
