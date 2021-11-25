@@ -8,7 +8,8 @@
       <v-card-text class="pt-3">
         <v-row>
           <v-col cols="2">
-            <v-img :src="'https://horrorpatch.com/wp-content/uploads/2021/07/SIX_32F3984C-A366-4B0B-B3DE-187FE2BF798F.png?resize=620%2C479&ssl=1'"/>
+            <v-img contain :src="band.logo"/>
+            <v-img max-height="300" :src="band.photo"/>
             <v-chip v-for="tag in band.tags" :key="tag"
                     class="ma-2"
                     color="orange"
@@ -67,6 +68,11 @@ export default {
   name: 'BandInfo',
   mounted() {
     this.$store.dispatch('getBandInfo', this.$route.params.id)
+  },
+  watch: {
+    '$route.params.id'(value) {
+      this.$store.dispatch('getBandInfo', value)
+    }
   },
   computed: {
     band() {
