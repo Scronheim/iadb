@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="elevation-3">{{ band.title }} ({{ band.origin }})
+      <v-card-title class="elevation-3">{{ band.title }} ({{ band.origin }}) | Status: <div :class="`${statusColor}--text`">{{ band.status }}</div>
         <v-spacer/>
         <v-rating background-color="orange lighten-3" color="orange" hover/>
       </v-card-title>
@@ -77,6 +77,20 @@ export default {
   computed: {
     band() {
       return this.$store.getters.currentBand
+    },
+    statusColor() {
+      switch (this.band.status) {
+        case 'active':
+          return 'green'
+        case 'unknown':
+          return 'orange'
+        case 'split-up':
+          return 'red'
+        case 'on-hold':
+          return 'yellow'
+        default:
+          return ''
+      }
     }
   },
   data: () => ({

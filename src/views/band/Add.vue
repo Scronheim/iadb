@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>Add new band</v-card-title>
+      <v-card-title class="elevation-3">Add new band</v-card-title>
       <v-card-text>
         <v-row>
           <v-col>
@@ -12,7 +12,7 @@
           </v-col>
           <v-col>
             <v-autocomplete dense label="Formed in"
-                      :items="years"
+                      :items="$store.getters.yearsRange"
                       v-model.number="band.formedIn"/>
           </v-col>
           <v-col>
@@ -58,13 +58,6 @@ export default {
           this.searchResultLabel = data.data
         })
       }
-    }
-  },
-  computed: {
-    years() {
-      const currentYear = (new Date()).getFullYear()
-      const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step))
-      return range(currentYear, currentYear - 50, -1)
     }
   },
   data: () => ({
