@@ -2,6 +2,9 @@
   <v-container>
     <v-card>
       <v-card-title>{{ album.band.title }} - {{ album.title }} ({{ album.year }})
+        <v-btn icon color="success" @click="saveAlbum">
+          <v-icon>mdi-content-save</v-icon>
+        </v-btn>
         <v-spacer/>
         <v-rating background-color="orange lighten-3" color="orange" hover v-model="album.rating"/>
       </v-card-title>
@@ -149,7 +152,7 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="lyricsDialog" @click:outside="saveAlbum">
+    <v-dialog v-model="lyricsDialog">
       <v-card>
         <v-card-title>Lyrics for {{ currentSong.title }}
           <v-btn icon color="info" @click="editLyrics = !editLyrics">
@@ -163,7 +166,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="tracklistDialog" width="40%" @click:outside="saveAlbum">
+    <v-dialog v-model="tracklistDialog" width="40%">
       <v-card>
         <v-card-title>Tracklist edit</v-card-title>
         <v-card-text>
@@ -176,13 +179,13 @@
           </v-row>
           <v-row dense v-for="(track, index) in album.trackList" :key="track.number">
             <v-col cols="2">
-              <v-text-field label="Number" dense type="number" min="1" v-model.number="track.number"/>
+              <v-text-field hide-details label="Number" dense type="number" min="1" v-model.number="track.number"/>
             </v-col>
             <v-col>
-              <v-text-field label="Title" dense v-model="track.title"/>
+              <v-text-field hide-details label="Title" dense v-model="track.title"/>
             </v-col>
             <v-col cols="2">
-              <v-text-field label="Duration" dense v-model="track.duration"/>
+              <v-text-field hide-details label="Duration" dense v-model="track.duration"/>
             </v-col>
             <v-col cols="1">
               <v-btn icon @click="showLyrics(track, true)">
