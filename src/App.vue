@@ -26,7 +26,7 @@
                 {{ item.title }} - {{ item.band.title }}
               </template>
               <template v-else-if="searchType === 'Band'">
-                {{ item.title }}
+                {{ item.title }} ({{ item.country.name }})
               </template>
             </template>
           </v-autocomplete>
@@ -62,6 +62,7 @@ export default {
     searchText(value) {
       if (!value) {
         this.searchResult = []
+        return
       }
       if (this.searchType === 'Band') {
         this.$store.dispatch('searchBand', value).then(({data}) => {

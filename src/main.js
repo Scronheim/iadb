@@ -32,6 +32,11 @@ Vue.filter('humanDate', function(datetime) {
   return moment(datetime).format('MMMM Do, YYYY')
 })
 
+Vue.filter('dateOnlyYear', function(datetime) {
+  if (!datetime) return ''
+  return moment(datetime).format('YYYY')
+})
+
 new Vue({
   router,
   store,

@@ -37,7 +37,7 @@
                           <v-btn text color="orange">{{ band.formedIn }}</v-btn>
                         </v-list-item>
                         <v-list-item class="pa-0">Country:
-                          <v-btn text color="orange">{{ band.country.title }}</v-btn>
+                          <v-btn text color="orange">{{ band.country.name }}</v-btn>
                         </v-list-item>
                         <v-list-item class="pa-0">Status:
                           <v-btn text :color="$store.state.statuses[band.status].color">{{ band.status }}</v-btn>
@@ -49,16 +49,19 @@
                         <v-list-item>
                           Official site: <v-btn color="info" small text link :href="band.officialSite" target="_blank">{{ band.officialSite }}</v-btn>
                         </v-list-item>
+                        <v-list-item>
+                          Tags:
+                          <v-chip-group column>
+                            <v-chip v-for="(tag, index) in band.tags" :key="tag" @click:close="removeTag(index)"
+                                    class="ml-2"
+                                    color="gray"
+                                    label
+                                    close
+                                    outlined>{{ tag }}
+                            </v-chip>
+                          </v-chip-group>
+                        </v-list-item>
                       </v-list>
-                      Tags:
-                      <v-chip v-for="(tag, index) in band.tags" :key="tag" @click:close="removeTag(index)"
-                              class="ma-2"
-                              color="gray"
-                              label
-                              close
-                              outlined>
-                        {{ tag }}
-                      </v-chip>
                     </v-col>
                   </v-row>
                 </v-expansion-panel-content>
@@ -97,7 +100,7 @@
           </v-col>
           <v-col cols="3">
             <v-card>
-              <v-btn color="success" small absolute top left fab>
+              <v-btn color="success" small absolute top left fab @click="addAlbumDialog = true">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
               <v-card-title class="elevation-3" style="background-color: #313131">Band album's</v-card-title>
@@ -105,8 +108,7 @@
                 <v-card class="mt-2" elevation="3" v-for="album in band.albums" :key="album.title">
                   <div class="d-flex flex-no-wrap justify-space-between">
                     <div>
-                      <v-card-title class="text-h5">{{ album.title }} ({{ album.year }})</v-card-title>
-                      <v-card-subtitle>{{ band.title }}</v-card-subtitle>
+                      <v-card-title class="text-h6">{{ album.title }} ({{ album.releaseDate | dateOnlyYear }})</v-card-title>
                       <v-card-actions>
                         <v-btn class="ml-2 mt-5" link :to="`/album/${album._id}`"
                                outlined
@@ -129,6 +131,14 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+    <v-dialog v-model="addAlbumDialog" width="50%" persistent>
+      <add-album-form @addAlbum="addAlbum">
+        <template v-slot:actions>
+          <v-btn color="error" @click="addAlbumDialog = false">Close</v-btn>
+        </template>
+      </add-album-form>
+    </v-dialog>
 
     <v-dialog v-model="lineUpDialog" width="40%">
       <v-card>
@@ -182,7 +192,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="generalInfoDialog" width="30%">
+    <v-dialog v-model="generalInfoDialog" width="40%">
       <v-card>
         <v-card-title>General info</v-card-title>
         <v-card-text>
@@ -192,8 +202,8 @@
             </v-col>
             <v-col cols="2">
               <v-autocomplete dense hide-details label="Formed in"
-                        :items="$store.getters.yearsRange"
-                        v-model="band.formedIn"/>
+                              :items="$store.getters.yearsRange"
+                              v-model="band.formedIn"/>
             </v-col>
           </v-row>
           <v-row>
@@ -216,7 +226,27 @@
           </v-row>
           <v-row>
             <v-col>
+              <v-text-field dense hide-details label="Official site" v-model="band.officialSite"/>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field dense hide-details label="Logo url" v-model="band.logo"/>
+            </v-col>
+            <v-col>
+              <v-text-field dense hide-details label="Photo url" v-model="band.photo"/>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
               <v-divider/>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn icon color="success" @click="addTag">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
             </v-col>
           </v-row>
           <v-row dense v-for="(tag, index) in band.tags" :key="index">
@@ -236,8 +266,10 @@
 </template>
 
 <script>
+import AddAlbumForm from '@/components/album/Add'
 export default {
   name: 'BandInfo',
+  components: {AddAlbumForm},
   mounted() {
     this.refreshData()
   },
@@ -278,9 +310,16 @@ export default {
     generalInfoDialog: false,
     descriptionEditDialog: false,
     lineUpDialog: false,
+    addAlbumDialog: false,
     showAddPersonInput: false,
+    newAlbum: {},
   }),
   methods: {
+    async addAlbum(album) {
+      await this.$store.dispatch('addAlbum', album)
+      this.$toast.success(`Album ${album.title} successful added`)
+      this.refreshData()
+    },
     async addPersonToLineUp(person) {
       const payload = {
         personId: person._id,

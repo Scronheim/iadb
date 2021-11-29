@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>{{ album.band.title }} - {{ album.title }} ({{ album.year }})
+      <v-card-title>{{ album.band.title }} - {{ album.title }} ({{ album.releaseDate | dateOnlyYear }})
         <v-btn icon color="success" @click="saveAlbum">
           <v-icon>mdi-content-save</v-icon>
         </v-btn>
@@ -170,34 +170,9 @@
       <v-card>
         <v-card-title>Tracklist edit</v-card-title>
         <v-card-text>
-          <v-row>
-            <v-col>
-              <v-btn icon color="success" @click="addTrack">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row dense v-for="(track, index) in album.trackList" :key="track.number">
-            <v-col cols="2">
-              <v-text-field hide-details label="Number" dense type="number" min="1" v-model.number="track.number"/>
-            </v-col>
-            <v-col>
-              <v-text-field hide-details label="Title" dense v-model="track.title"/>
-            </v-col>
-            <v-col cols="2">
-              <v-text-field hide-details label="Duration" dense v-model="track.duration"/>
-            </v-col>
-            <v-col cols="1">
-              <v-btn icon @click="showLyrics(track, true)">
-                <v-icon>mdi-card-text</v-icon>
-              </v-btn>
-            </v-col>
-            <v-col cols="1">
-              <v-btn icon color="error" @click="removeTrack(index)">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
+          <tracklist
+              :track-list="album.trackList"
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -205,8 +180,10 @@
 </template>
 
 <script>
+import Tracklist from "@/components/album/Tracklist"
 export default {
   name: "AlbumInfo",
+  components: {Tracklist},
   mounted() {
     this.$store.dispatch('getAlbumInfo', this.$route.params.id)
   },
@@ -284,17 +261,6 @@ export default {
         this.$store.dispatch('getAlbumInfo', this.$route.params.id)
       })
     },
-    addTrack() {
-      this.album.trackList.push({
-        number: this.album.trackList[this.album.trackList.length-1].number + 1,
-        title: '',
-        duration: '00:00',
-        lyrics: '',
-      })
-    },
-    removeTrack(index) {
-      this.album.trackList.splice(index, 1)
-    }
   }
 }
 </script>
