@@ -9,6 +9,8 @@ import 'vue-toastification/dist/index.css'
 
 Vue.config.productionTip = false
 
+Vue.prototype.$moment = moment
+
 Vue.use(Toast, {
   transition: 'Vue-Toastification__bounce',
   maxToasts: 3,

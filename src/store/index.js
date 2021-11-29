@@ -15,8 +15,11 @@ export default new Vuex.Store({
     currentAlbum: {
       band: {},
       label: {},
+      trackList: [],
     },
-    currentLabel: {},
+    currentLabel: {
+      status: 'active',
+    },
     albumTypes: ['Full-length', 'EP', 'Single', 'Demo', 'Compilation', 'Split'],
     statuses: {
       active: {

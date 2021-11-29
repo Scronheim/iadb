@@ -145,6 +145,10 @@
                     </v-btn>
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="2">Total length</td>
+                  <td>{{ totalAlbumDuration }}</td>
+                </tr>
               </tbody>
             </v-simple-table>
           </v-col>
@@ -213,6 +217,12 @@ export default {
   computed: {
     album() {
       return this.$store.getters.currentAlbum
+    },
+    totalAlbumDuration() {
+      const sum = this.album.trackList.map((track) => {
+        return track.duration
+      }).reduce((acc, time) => acc.add(this.$moment.duration(time)), this.$moment.duration())
+      return [Math.floor(sum.asHours()), sum.minutes()].join(':')
     }
   },
   data: () => ({
