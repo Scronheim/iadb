@@ -40,6 +40,11 @@ const routes = [
     name: 'Label Info',
     component: () => import(/* webpackChunkName: "LabelInfo" */ '../views/label/Info')
   },
+  {
+    path: '/person/:id',
+    name: 'Person Info',
+    component: () => import(/* webpackChunkName: "PersonInfo" */ '../views/person/Info')
+  },
 ]
 
 const router = new VueRouter({

@@ -110,7 +110,7 @@
                   <template v-else>
                     Label:
                     <v-btn link text color="orange"
-                                  :to="`/label/${album.label._id}`">{{ album.label.title }}</v-btn>
+                           :to="`/label/${album.label._id}`">{{ album.label.title }}</v-btn>
                     <v-btn icon color="info" v-if="hover" @click="showLabelInput = true">
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
@@ -118,6 +118,25 @@
                 </v-list-item>
               </v-hover>
             </v-list>
+            <v-expansion-panels :value="0">
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  <div>Line up
+                    <v-btn icon color="info" @click="openLineUpDialog">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </div>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-for="(person) in album.lineUp" :key="person._id">
+                    <v-btn text color="orange" link class="pl-1 pr-1"
+                           :to="`/person/${person._id}`">
+                      {{ person.name }}
+                    </v-btn> - {{ person.instruments }} <br/>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-col>
           <v-col>
             <v-btn rounded fab x-small color="info" @click="tracklistDialog = true">
@@ -156,6 +175,10 @@
       </v-card-text>
     </v-card>
 
+    <v-dialog v-model="lineUpDialog" width="40%">
+      <line-up :entity="album" @refreshData="refreshData"/>
+    </v-dialog>
+
     <v-dialog v-model="lyricsDialog">
       <v-card>
         <v-card-title>Lyrics for {{ currentSong.title }}
@@ -184,12 +207,13 @@
 </template>
 
 <script>
-import Tracklist from "@/components/album/Tracklist"
+import Tracklist from '@/components/album/Tracklist'
+import LineUp from '@/components/LineUp'
 export default {
   name: "AlbumInfo",
-  components: {Tracklist},
+  components: {Tracklist, LineUp},
   mounted() {
-    this.$store.dispatch('getAlbumInfo', this.$route.params.id)
+    this.refreshData()
   },
   watch: {
     '$route.params.id'(value) {
@@ -238,8 +262,16 @@ export default {
     tracklistDialog: false,
     lyricsDialog: false,
     editLyrics: false,
+    lineUpDialog: false,
   }),
   methods: {
+    refreshData() {
+      this.$store.dispatch('getAlbumInfo', this.$route.params.id)
+    },
+    openLineUpDialog(event) {
+      event.stopPropagation()
+      this.lineUpDialog = true
+    },
     showLyrics(song, showEditLyrics) {
       this.currentSong = song
       this.editLyrics = showEditLyrics

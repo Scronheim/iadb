@@ -47,7 +47,7 @@
                     <v-col>
                       <v-list dense>
                         <v-list-item>
-                          Official site: <v-btn color="info" small text link :href="band.officialSite" target="_blank">{{ band.officialSite }}</v-btn>
+                          Label: <v-btn color="orange" text link :to="`/label/${band.label._id}`">{{ band.label.title }}</v-btn>
                         </v-list-item>
                         <v-list-item>
                           Tags:
@@ -96,6 +96,20 @@
                   </v-list>
                 </v-expansion-panel-content>
               </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header color="#313131">
+                  <div>
+                    Links
+                    <v-btn small icon color="info" @click="openLinksEditor">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </div>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content class="mt-3">
+                  <v-btn color="info" v-for="link in band.links" :key="link.service"
+                         small text link :href="link.url" target="_blank">{{ link.service }}</v-btn>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
             </v-expansion-panels>
           </v-col>
           <v-col cols="3">
@@ -132,6 +146,47 @@
       </v-card-text>
     </v-card>
 
+    <v-dialog v-model="linksDialog" width="40%">
+      <v-card>
+        <v-card-title>Links editor</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-select dense hide-details label="Service"
+                              :items="$store.getters.linkTypes"
+                              v-model="addableLink.service"/>
+            </v-col>
+            <v-col>
+              <v-text-field dense hide-details label="URL" v-model="addableLink.url"/>
+            </v-col>
+            <v-col cols="1">
+              <v-btn icon color="success" @click="addLink">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-divider/>
+            </v-col>
+          </v-row>
+          <v-row v-for="(link, index) in band.links" :key="index">
+            <v-col>
+              <v-text-field dense hide-details label="Service" v-model="link.service"/>
+            </v-col>
+            <v-col>
+              <v-text-field dense hide-details label="URL" v-model="link.url"/>
+            </v-col>
+            <v-col cols="1">
+              <v-btn icon color="error" @click="removeLink(index)">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="addAlbumDialog" width="50%" persistent>
       <add-album-form @addAlbum="addAlbum">
         <template v-slot:actions>
@@ -141,42 +196,7 @@
     </v-dialog>
 
     <v-dialog v-model="lineUpDialog" width="40%">
-      <v-card>
-        <v-card-title>Line up editor
-          <v-btn icon color="success" @click="showAddPersonInput = true">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text>
-          <v-row v-if="showAddPersonInput">
-            <v-col>
-              <v-autocomplete :search-input.sync="personSearch"
-                              :items="searchPersonResult"
-                              item-value="_id"
-                              item-text="name"
-                              label="People"
-                              no-data-text="Type person name"
-                              dense hide-details clearable
-                              return-object
-                              @input="addPersonToLineUp"
-              />
-            </v-col>
-          </v-row>
-          <v-row v-for="person in band.lineUp" :key="person.name">
-            <v-col cols="3">
-              {{ person.name }}
-            </v-col>
-            <v-col>
-              {{ person.instruments }}
-            </v-col>
-            <v-col cols="1">
-              <v-btn icon color="error" @click="removeFromLineUp(person)">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+      <line-up :entity="band" @refreshData="refreshData"/>
     </v-dialog>
 
     <v-dialog v-model="descriptionEditDialog" width="30%">
@@ -212,7 +232,7 @@
                               v-model="band.countryId"
                               :items="searchCountryResult"
                               item-value="_id"
-                              item-text="title"
+                              item-text="name"
                               :search-input.sync="countrySearch"
               />
             </v-col>
@@ -225,6 +245,15 @@
             </v-col>
           </v-row>
           <v-row>
+            <v-col>
+              <v-autocomplete dense hide-details clearable label="Label"
+                              v-model="band.labelId"
+                              :items="searchLabelResult"
+                              item-value="_id"
+                              item-text="title"
+                              :search-input.sync="labelSearch"
+              />
+            </v-col>
             <v-col>
               <v-text-field dense hide-details label="Official site" v-model="band.officialSite"/>
             </v-col>
@@ -267,9 +296,10 @@
 
 <script>
 import AddAlbumForm from '@/components/album/Add'
+import LineUp from '@/components/LineUp'
 export default {
   name: 'BandInfo',
-  components: {AddAlbumForm},
+  components: {AddAlbumForm, LineUp},
   mounted() {
     this.refreshData()
   },
@@ -286,12 +316,12 @@ export default {
         })
       }
     },
-    personSearch(value) {
+    labelSearch(value) {
       if (!value) {
-        this.searchPersonResult = []
+        this.searchLabelResult = []
       } else {
-        this.$store.dispatch('searchPeople', value).then(({data}) => {
-          this.searchPersonResult = data.data
+        this.$store.dispatch('searchLabel', value).then(({data}) => {
+          this.searchLabelResult = data.data
         })
       }
     }
@@ -302,41 +332,38 @@ export default {
     },
   },
   data: () => ({
+    addableLink: {
+      service: null,
+      url: null,
+    },
+    labelSearch: null,
     personSearch: null,
     countrySearch: null,
     searchCountryResult: [],
     searchPersonResult: [],
+    searchLabelResult: [],
     expPanels: 0,
     generalInfoDialog: false,
     descriptionEditDialog: false,
     lineUpDialog: false,
     addAlbumDialog: false,
-    showAddPersonInput: false,
+    linksDialog: false,
     newAlbum: {},
   }),
   methods: {
+    addLink() {
+      this.band.links.push(this.addableLink)
+    },
+    removeLink(index) {
+      this.band.links.splice(index, 1)
+    },
+    openLinksEditor(event) {
+      event.stopPropagation()
+      this.linksDialog = true
+    },
     async addAlbum(album) {
       await this.$store.dispatch('addAlbum', album)
       this.$toast.success(`Album ${album.title} successful added`)
-      this.refreshData()
-    },
-    async addPersonToLineUp(person) {
-      const payload = {
-        personId: person._id,
-        bandId: this.band._id
-      }
-      await this.$store.dispatch('addPersonToBand', payload)
-      this.$toast.success(`${person.name} successful added to this band`)
-      this.personSearch = null
-      this.refreshData()
-    },
-    async removeFromLineUp(person) {
-      const payload = {
-        personId: person._id,
-        bandId: this.band._id
-      }
-      await this.$store.dispatch('removePersonFromBand', payload)
-      this.$toast.success(`${person.name} successful removed from this band`)
       this.refreshData()
     },
     openLineUpDialog(event) {

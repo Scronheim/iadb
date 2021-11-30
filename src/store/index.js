@@ -1,26 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+
+import personModule from '@/store/modules/person'
+import bandModule from '@/store/modules/band'
+import albumModule from '@/store/modules/album'
+import labelModule from '@/store/modules/label'
+import countryModule from '@/store/modules/country'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    currentBand: {
-      albums: [],
-      country: {},
-      label: {},
-      status: 'active',
-    },
-    currentAlbum: {
-      band: {},
-      label: {},
-      trackList: [],
-    },
-    currentLabel: {
-      status: 'active',
-    },
     albumTypes: ['Full-length', 'EP', 'Single', 'Demo', 'Compilation', 'Split'],
+    linkTypes: ['Official site', 'Facebook', 'Instagram', 'Twitter', 'Spotify', 'Youtube', 'Band in town', 'Bandcamp',
+      'Discogs', 'Wikipedia', 'Telegram', 'VK'],
     statuses: {
       active: {
         color: 'green'
@@ -37,71 +30,14 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    setCurrentBand(state, payload) {
-      state.currentBand = payload
-    },
-    setCurrentAlbum(state, payload) {
-      state.currentAlbum = payload
-    },
-    setCurrentLabel(state, payload) {
-      state.currentLabel = payload
-    },
+
   },
   actions: {
-    async getBandInfo({commit}, id) {
-      const {data} = await axios.get(`/api/band/id/${id}`)
-      commit('setCurrentBand', data.data)
-    },
-    addBand(context, payload) {
-      return axios.post('/api/band', payload)
-    },
-    saveBand({state}) {
-      return axios.patch('/api/band', state.currentBand)
-    },
-    async getAlbumInfo({commit}, id) {
-      const {data} = await axios.get(`/api/album/id/${id}`)
-      commit('setCurrentAlbum', data.data)
-    },
-    addAlbum(context, payload) {
-      return axios.post('/api/album', payload)
-    },
-    saveAlbum({state}) {
-      return axios.patch('/api/album', state.currentAlbum)
-    },
-    async getLabelInfo({commit}, id) {
-      const {data} = await axios.get(`/api/label/id/${id}`)
-      commit('setCurrentLabel', data.data)
-    },
-    async searchBand(context, payload) {
-      return await axios.get(`/api/band?search=${payload}`)
-    },
-    async searchAlbum(context, payload) {
-      return await axios.get(`/api/album?search=${payload}`)
-    },
-    async searchLabel(context, payload) {
-      return await axios.get(`/api/label?search=${payload}`)
-    },
-    async searchCountry(context, payload) {
-      return await axios.get(`/api/country?search=${payload}`)
-    },
-    async searchPeople(context, payload) {
-      return await axios.get(`/api/people?search=${payload}`)
-    },
-    addPersonToBand(context, payload) {
-      return axios.post('/api/people/band', payload)
-    },
-    removePersonFromBand(context, payload) {
-      return axios.delete('/api/people/band', {
-        headers: {},
-        data: payload
-      })
-    }
+
   },
   getters: {
-    currentBand: state => state.currentBand,
-    currentAlbum: state => state.currentAlbum,
-    currentLabel: state => state.currentLabel,
     albumTypes: state => state.albumTypes,
+    linkTypes: state => state.linkTypes,
     yearsRange: function () {
       const currentYear = (new Date()).getFullYear()
       const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step))
@@ -116,5 +52,11 @@ export default new Vuex.Store({
       })
     },
   },
-  modules: {},
+  modules: {
+    person: personModule,
+    band: bandModule,
+    album: albumModule,
+    label: labelModule,
+    country: countryModule,
+  },
 })
