@@ -6,6 +6,7 @@ import bandModule from '@/store/modules/band'
 import albumModule from '@/store/modules/album'
 import labelModule from '@/store/modules/label'
 import countryModule from '@/store/modules/country'
+import userModule from '@/store/modules/user'
 
 Vue.use(Vuex)
 
@@ -58,5 +59,6 @@ export default new Vuex.Store({
     album: albumModule,
     label: labelModule,
     country: countryModule,
+    user: userModule,
   },
 })

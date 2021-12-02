@@ -31,17 +31,27 @@
             </template>
           </v-autocomplete>
         </v-col>
-        <v-col cols="1">
-          <v-btn>
-            <v-icon>mdi-format-list-checks</v-icon>
-            Wishlist
-          </v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn block>
-            <v-icon>mdi-account</v-icon>
-            User</v-btn>
-        </v-col>
+        <template v-if="$store.getters.isLogin">
+          <v-col cols="1">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-on="on" v-bind="attrs">{{ $store.getters.user.username }}</v-btn>
+              </template>
+              <v-list dense>
+                <v-list-item dense link to="/profile">Profile</v-list-item>
+                <v-list-item dense link @click="logout">Logout</v-list-item>
+              </v-list>
+            </v-menu>
+          </v-col>
+        </template>
+        <template v-else>
+          <v-col cols="1">
+            <v-btn block link to="/login">Login</v-btn>
+          </v-col>
+          <v-col cols="1">
+            <v-btn block link to="/register">Register</v-btn>
+          </v-col>
+        </template>
       </v-row>
     </v-app-bar>
 
@@ -57,6 +67,9 @@ export default {
   name: 'App',
   mounted() {
     this.$vuetify.theme.dark = true
+    if (localStorage.getItem('token')) {
+      this.$store.dispatch('aboutMe')
+    }
   },
   watch: {
     searchText(value) {
@@ -83,6 +96,9 @@ export default {
     searchResult: [],
   }),
   methods: {
+    logout() {
+      this.$store.dispatch('logout')
+    },
     goToPage(id) {
       if (id && id !== this.$route.params.id) {
         switch (this.searchType) {

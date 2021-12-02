@@ -29,6 +29,20 @@ Vue.use(Toast, {
   rtl: false,
 })
 
+Vue.filter('albumRating', function(id) {
+  if (!id) return ''
+  return store.getters.user.likedAlbumIds.find((a) => {
+    return a.albumId === id
+  }).rating
+})
+
+Vue.filter('albumRatingDate', function(id) {
+  if (!id) return ''
+  return store.getters.user.likedAlbumIds.find((a) => {
+    return a.albumId === id
+  }).createdAt
+})
+
 Vue.filter('humanDate', function(datetime) {
   if (!datetime) return ''
   return moment(datetime).format('MMMM Do, YYYY')

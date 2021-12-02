@@ -11,6 +11,21 @@ const routes = [
     component: Home
   },
   {
+    path: '/login',
+    name: 'Login page',
+    component: () => import(/* webpackChunkName: "Login" */ '../views/auth/Login'),
+  },
+  {
+    path: '/register',
+    name: 'Register page',
+    component: () => import(/* webpackChunkName: "Register" */ '../views/auth/Register'),
+  },
+  {
+    path: '/profile',
+    name: 'User profile page',
+    component: () => import(/* webpackChunkName: "Profile" */ '../views/auth/Profile'),
+  },
+  {
     path: '/band/add',
     name: 'Add band',
     component: () => import(/* webpackChunkName: "AddBand" */ '../views/band/Add'),
