@@ -15,8 +15,8 @@ const albumModule = {
   },
   actions: {
     async getAlbumInfo({commit}, id) {
-      const {data} = await axios.get(`/api/album/id/${id}`)
-      commit('setCurrentAlbum', data.data)
+      const response = await axios.get(`/api/album/id/${id}`)
+      commit('setCurrentAlbum', response.data.data)
     },
     addAlbum(context, payload) {
       return axios.post('/api/album', payload)

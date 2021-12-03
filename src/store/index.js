@@ -28,15 +28,24 @@ export default new Vuex.Store({
       'on-hold': {
         color: 'yellow'
       },
-    }
+    },
+    token: null,
   },
   mutations: {
-
+    getToken(state) {
+      const token = localStorage.getItem('token')
+      if (token) {
+        state.token = token
+      }
+    }
   },
   actions: {
-
+    axiosErrorHandler(context, error) {
+      Vue.$toast.error(error.response.data.message)
+    }
   },
   getters: {
+    token: state => state.token,
     albumTypes: state => state.albumTypes,
     linkTypes: state => state.linkTypes,
     yearsRange: function () {

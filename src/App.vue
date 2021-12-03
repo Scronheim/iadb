@@ -66,6 +66,7 @@
 export default {
   name: 'App',
   mounted() {
+    this.$store.commit('getToken')
     this.$vuetify.theme.dark = true
     if (localStorage.getItem('token')) {
       this.$store.dispatch('aboutMe')

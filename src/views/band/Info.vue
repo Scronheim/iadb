@@ -381,8 +381,6 @@ export default {
     async saveBand() {
       this.$store.commit('setCurrentBand', this.band)
       await this.$store.dispatch('saveBand')
-      this.refreshData()
-      this.$toast.success(`Band ${this.band.title} successful saved`)
     },
     removeTag(index) {
       this.band.tags.splice(index, 1)

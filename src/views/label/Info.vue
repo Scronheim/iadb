@@ -40,7 +40,10 @@
                           item-key="_id"
             >
               <template v-slot:item.title="{item}">
-                <router-link :to="`/band/${item._id}`">{{ item.title }}</router-link>
+                <v-btn class="pl-1 pr-1" text link color="orange" :to="`/band/${item._id}`">{{ item.title }}</v-btn>
+              </template>
+              <template v-slot:item.origin="{item}">
+                <v-btn class="pl-1 pr-1" text link color="orange">{{ item.origin }}</v-btn>
               </template>
             </v-data-table>
           </v-card-text>
@@ -103,7 +106,7 @@ export default {
     headers: [
       {text: 'Band', align: 'start', sortable: true, value: 'title'},
       {text: 'Origin', align: 'start', sortable: false, value: 'origin'},
-      {text: 'Tags', align: 'start', sortable: false, value: 'tags'},
+      // {text: 'Tags', align: 'start', sortable: false, value: 'tags'},
     ],
     albumHeaders: [
       {text: 'Title', align: 'start', sortable: true, value: 'title'},

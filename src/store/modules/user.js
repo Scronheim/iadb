@@ -1,5 +1,5 @@
-import axios from 'axios'
 import router from '../../router/index'
+import axios from 'axios'
 
 const userModule = {
   state: () => ({
@@ -10,9 +10,21 @@ const userModule = {
       roles: [],
       likedAlbumIds: [],
       likedAlbums: [],
+      listenListIds: [],
     },
   }),
   mutations: {
+    addToListenList(state, id) {
+      state.user.listenListIds.push(id)
+    },
+    removeFromListenList(state, id) {
+      const index = state.user.listenListIds.findIndex((i) => {
+        return i === id
+      })
+      if (index > -1) {
+        state.user.listenListIds.splice(index, 1)
+      }
+    },
     setUser(state, payload) {
       state.user = payload
     },
@@ -23,9 +35,12 @@ const userModule = {
     }
   },
   actions: {
+    async saveUser({state}) {
+      return await axios.post('/api/user', state.user)
+    },
     async aboutMe({commit}) {
       const token = localStorage.getItem('token')
-      const {data} = await axios.get('/api/auth/me', {headers: {'x-access-token': token}})
+      const {data} = await axios.get('/api/user/me', {headers: {'x-access-token': token}})
       commit('setUser', data.data)
     },
     async login({commit}, payload) {
@@ -56,6 +71,12 @@ const userModule = {
         return r.name === 'admin'
       })
       return !!admin
+    },
+    inListenList: function (state, rootState) {
+      const album = state.user.listenListIds.find((i) => {
+        return i === rootState.currentAlbum._id
+      })
+      return !!album
     }
   }
 }

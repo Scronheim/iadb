@@ -11,11 +11,41 @@
       <v-card-text>
         <v-row>
           <v-col :cols="$vuetify.breakpoint.lg ? 3: 2">
-            <v-avatar
-                size="290"
-                rounded>
-              <v-img :src="album.cover"/>
-            </v-avatar>
+            <v-hover>
+              <template v-slot:default="{ hover }">
+                <v-card class="mx-auto">
+                  <v-avatar
+                      size="268"
+                      rounded>
+                    <v-img :src="album.cover"/>
+                  </v-avatar>
+                  <v-fade-transition>
+                    <v-overlay
+                        v-if="hover"
+                        absolute
+                        color="#036358"
+                    >
+                      <v-tooltip top v-if="!$store.getters.inListenList">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn icon color="success" x-large v-on="on" v-bind="attrs" @click="addToListenList">
+                            <v-icon>mdi-headphones-box</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Add to listen list</span>
+                      </v-tooltip>
+                      <v-tooltip top v-else>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn icon color="error" x-large v-on="on" v-bind="attrs" @click="removeFromListenList">
+                            <v-icon>mdi-headphones-off</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Remove from listen list</span>
+                      </v-tooltip>
+                    </v-overlay>
+                  </v-fade-transition>
+                </v-card>
+              </template>
+            </v-hover>
           </v-col>
           <v-col>
             <v-list dense>
@@ -265,6 +295,14 @@ export default {
     lineUpDialog: false,
   }),
   methods: {
+    removeFromListenList() {
+      this.$store.commit('removeFromListenList', this.album._id)
+      this.$store.dispatch('saveUser')
+    },
+    addToListenList() {
+      this.$store.commit('addToListenList', this.album._id)
+      this.$store.dispatch('saveUser')
+    },
     refreshData() {
       this.$store.dispatch('getAlbumInfo', this.$route.params.id)
     },
